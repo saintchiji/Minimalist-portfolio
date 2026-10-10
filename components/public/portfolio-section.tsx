@@ -37,12 +37,11 @@ export function PortfolioSection({ projects, categories }: PortfolioSectionProps
               </span>
               <Link
                 href="/admin"
-                className="opacity-0 hover:opacity-100 focus:opacity-100 p-1 text-neutral-400 hover:text-black dark:hover:text-white transition-opacity"
-                title="Curator Access"
-                aria-label="Curator Access"
-                tabIndex={0}
+                className="opacity-40 hover:opacity-100 p-1 text-neutral-500 hover:text-black dark:hover:text-white transition-opacity inline-flex items-center space-x-1"
+                title="Admin Dashboard"
+                aria-label="Admin Dashboard"
               >
-                <Lock className="w-3 h-3" />
+                <Lock className="w-3.5 h-3.5" />
               </Link>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight">
