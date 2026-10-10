@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { SocialLink, NavItem } from '@/lib/types';
-import { ArrowUp, Mail, Phone, MapPin, Lock } from 'lucide-react';
+import { ArrowUp, Mail, Phone, MapPin } from 'lucide-react';
 
 interface FooterProps {
   branding: {
@@ -131,24 +131,14 @@ export function Footer({ branding, navigation, contact, socials }: FooterProps) 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs font-mono text-neutral-500">
           <p>{navigation.footerCopyright || `© ${new Date().getFullYear()} All rights reserved.`}</p>
 
-          <div className="flex items-center space-x-6">
-            <Link
-              href="/admin"
-              className="hover:text-black dark:hover:text-white transition-colors flex items-center space-x-1.5"
-            >
-              <Lock className="w-3 h-3" />
-              <span>Admin Dashboard</span>
-            </Link>
-
-            <button
-              onClick={scrollToTop}
-              type="button"
-              className="flex items-center space-x-1.5 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
-            >
-              <span>Back to Top</span>
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          <button
+            onClick={scrollToTop}
+            type="button"
+            className="flex items-center space-x-1.5 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
+          >
+            <span>Back to Top</span>
+            <ArrowUp className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </footer>

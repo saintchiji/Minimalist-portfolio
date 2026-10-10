@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { BrandingSettings, NavItem } from '@/lib/types';
 import { ThemeToggle } from '../theme-toggle';
-import { Menu, X, Lock } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 interface NavbarProps {
   branding: BrandingSettings;
@@ -79,17 +79,9 @@ export function Navbar({ branding, navItems }: NavbarProps) {
           ))}
         </nav>
 
-        {/* Controls: Theme toggle & direct Admin shortcut */}
-        <div className="hidden md:flex items-center space-x-2">
+        {/* Controls: Theme toggle */}
+        <div className="hidden md:flex items-center space-x-3">
           <ThemeToggle />
-          <Link
-            href="/admin"
-            className="p-2 border border-neutral-300 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors"
-            title="Admin Dashboard"
-            aria-label="Admin Dashboard"
-          >
-            <Lock className="w-3.5 h-3.5" />
-          </Link>
         </div>
 
         {/* Mobile menu toggle */}
@@ -120,19 +112,6 @@ export function Navbar({ branding, navItems }: NavbarProps) {
               </a>
             ))}
           </nav>
-          <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-            <span className="text-xs uppercase tracking-widest text-neutral-500 font-mono">
-              Admin Portal
-            </span>
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="inline-flex items-center space-x-1.5 text-xs font-mono uppercase tracking-widest border border-neutral-300 dark:border-neutral-700 px-3 py-1.5 text-black dark:text-white"
-            >
-              <Lock className="w-3 h-3" />
-              <span>Login</span>
-            </Link>
-          </div>
         </div>
       )}
     </header>
