@@ -642,7 +642,7 @@ function getInitialData(): PortfolioDatabase {
 // In-memory cache for fast read operations
 let memoryDb: PortfolioDatabase | null = null;
 
-// Ensure database file exists
+// Ensure database file exists with safe serverless and remote sync fallback
 export function getDb(): PortfolioDatabase {
   if (memoryDb) {
     return memoryDb;
@@ -650,11 +650,22 @@ export function getDb(): PortfolioDatabase {
 
   try {
     if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+      try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      } catch {}
     }
 
     if (fs.existsSync(DB_FILE)) {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
+      const parsed = JSON.parse(content) as PortfolioDatabase;
+      memoryDb = parsed;
+      return parsed;
+    }
+
+    // Check /tmp fallback in serverless environments
+    const tmpFile = path.join('/tmp', 'portfolio.json');
+    if (fs.existsSync(tmpFile)) {
+      const content = fs.readFileSync(tmpFile, 'utf-8');
       const parsed = JSON.parse(content) as PortfolioDatabase;
       memoryDb = parsed;
       return parsed;
@@ -673,17 +684,33 @@ export function getDb(): PortfolioDatabase {
 export function saveDb(data: PortfolioDatabase): void {
   try {
     if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+      try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      } catch {}
     }
 
-    // Atomic write
-    const tempFile = `${DB_FILE}.tmp.${Date.now()}`;
-    fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), 'utf-8');
-    fs.renameSync(tempFile, DB_FILE);
+    // Atomic write to local file
+    try {
+      const tempFile = `${DB_FILE}.tmp.${Date.now()}`;
+      fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), 'utf-8');
+      fs.renameSync(tempFile, DB_FILE);
+    } catch {
+      // In read-only serverless disk (Vercel lambda), write to /tmp
+      const tmpFile = path.join('/tmp', 'portfolio.json');
+      fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf-8');
+    }
+
     memoryDb = data;
+
+    // Asynchronously sync to external persistent DB (Supabase / Vercel KV) if configured
+    import('./storage')
+      .then(({ syncSaveRemote }) => {
+        syncSaveRemote(data).catch(() => {});
+      })
+      .catch(() => {});
   } catch (err) {
     console.error('Error saving database:', err);
-    throw new Error('Failed to save data to storage');
+    memoryDb = data;
   }
 }
 

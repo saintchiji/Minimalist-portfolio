@@ -30,17 +30,41 @@ export async function POST(req: NextRequest) {
       .substring(0, 50);
 
     const filename = `${Date.now()}-${cleanBaseName}${ext}`;
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const filePath = path.join(uploadDir, filename);
-    fs.writeFileSync(filePath, buffer);
-
-    const publicUrl = `/uploads/${filename}`;
+    let publicUrl = '';
     const isVideo = /\.(mp4|webm|mov|m4v|ogg)$/i.test(ext);
+    const contentType = file.type || (isVideo ? 'video/mp4' : 'image/jpeg');
+
+    // 1. Try remote cloud storage if configured
+    try {
+      const { uploadRemoteMedia } = await import('@/lib/storage');
+      const remoteUrl = await uploadRemoteMedia(buffer, `${cleanBaseName}${ext}`, contentType);
+      if (remoteUrl) {
+        publicUrl = remoteUrl;
+      }
+    } catch {}
+
+    // 2. Fall back to local uploads directory or serverless /tmp
+    if (!publicUrl) {
+      try {
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        const filePath = path.join(uploadDir, filename);
+        fs.writeFileSync(filePath, buffer);
+        publicUrl = `/uploads/${filename}`;
+      } catch {
+        // Fallback for Vercel lambda /tmp directory
+        const tmpDir = path.join('/tmp', 'uploads');
+        if (!fs.existsSync(tmpDir)) {
+          fs.mkdirSync(tmpDir, { recursive: true });
+        }
+        const tmpFilePath = path.join(tmpDir, filename);
+        fs.writeFileSync(tmpFilePath, buffer);
+        // Base64 data URI fallback if completely serverless without S3
+        publicUrl = `data:${contentType};base64,${buffer.toString('base64')}`;
+      }
+    }
 
     const mediaRecord = addMediaItem({
       filename: origName,

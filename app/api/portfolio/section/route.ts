@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAdminAuthenticated } from '@/lib/auth';
 import {
   updateHero,
@@ -93,6 +94,10 @@ export async function PUT(req: NextRequest) {
       }
       case 'reset': {
         const restored = resetToDefaults();
+        try {
+          revalidatePath('/');
+          revalidatePath('/api/portfolio');
+        } catch {}
         return NextResponse.json({ success: true, message: 'Restored default portfolio data', data: restored });
       }
       default:
@@ -101,5 +106,10 @@ export async function PUT(req: NextRequest) {
   } catch (error) {
     console.error('Error updating section:', error);
     return NextResponse.json({ error: 'Failed to update section' }, { status: 500 });
+  } finally {
+    try {
+      revalidatePath('/');
+      revalidatePath('/api/portfolio');
+    } catch {}
   }
 }

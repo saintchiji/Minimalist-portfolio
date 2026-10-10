@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { isAdminAuthenticated } from '@/lib/auth';
 import { saveProject, deleteProject, reorderProjects, getProjects } from '@/lib/db';
 import { Project } from '@/lib/types';
@@ -44,6 +45,11 @@ export async function POST(req: NextRequest) {
     };
 
     const saved = saveProject(projectToSave);
+    try {
+      revalidatePath('/');
+      revalidatePath(`/work/${saved.slug}`);
+      revalidatePath('/api/portfolio');
+    } catch {}
     return NextResponse.json({ success: true, project: saved });
   } catch (error) {
     console.error('Error creating project:', error);
@@ -63,6 +69,10 @@ export async function PUT(req: NextRequest) {
     // Check if this is a reorder action
     if (body.action === 'reorder' && Array.isArray(body.orderedIds)) {
       const reordered = reorderProjects(body.orderedIds);
+      try {
+        revalidatePath('/');
+        revalidatePath('/api/portfolio');
+      } catch {}
       return NextResponse.json({ success: true, projects: reordered });
     }
 
@@ -73,6 +83,11 @@ export async function PUT(req: NextRequest) {
     }
 
     const saved = saveProject(project);
+    try {
+      revalidatePath('/');
+      revalidatePath(`/work/${saved.slug}`);
+      revalidatePath('/api/portfolio');
+    } catch {}
     return NextResponse.json({ success: true, project: saved });
   } catch (error) {
     console.error('Error updating project:', error);
@@ -100,6 +115,10 @@ export async function DELETE(req: NextRequest) {
     }
 
     const success = deleteProject(id);
+    try {
+      revalidatePath('/');
+      revalidatePath('/api/portfolio');
+    } catch {}
     return NextResponse.json({ success });
   } catch (error) {
     console.error('Error deleting project:', error);

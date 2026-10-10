@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { GeneralSettings } from '@/lib/types';
-import { Save, Key, RotateCcw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Save, Key, RotateCcw, CheckCircle2, AlertCircle, Download, Upload } from 'lucide-react';
+import { adminFetch } from '@/lib/client-auth';
 
 interface GeneralTabProps {
   general: Pick<GeneralSettings, 'siteName' | 'siteDescription' | 'keywords' | 'adminEmail'>;
@@ -212,6 +213,73 @@ export function GeneralTab({ general, onSave, onResetDefaults }: GeneralTabProps
           </div>
         </div>
       </form>
+
+      {/* Zero-Key Persistence: One-Click JSON Backup & Restore */}
+      <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/50 space-y-4">
+        <div>
+          <h3 className="text-xs font-mono uppercase tracking-[0.2em] font-bold">
+            Zero-Key Data Persistence & Backup
+          </h3>
+          <p className="text-xs text-neutral-500 pt-1">
+            No API keys or credit cards required. Export your entire live portfolio (films, specs, categories, biography, and settings) as a portable snapshot, or import one at any time.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-3 pt-2">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                const res = await adminFetch('/api/portfolio/backup');
+                if (!res.ok) throw new Error('Export failed');
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `portfolio-backup-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setFeedback({ type: 'success', message: 'Portfolio snapshot exported successfully!' });
+              } catch {
+                setFeedback({ type: 'error', message: 'Failed to export portfolio backup.' });
+              }
+            }}
+            className="inline-flex items-center space-x-2 bg-black dark:bg-white text-white dark:text-black px-4 py-2 text-xs font-mono uppercase font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-200"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Download Portfolio Snapshot</span>
+          </button>
+
+          <label className="inline-flex items-center space-x-2 border border-neutral-400 dark:border-neutral-700 px-4 py-2 text-xs font-mono uppercase cursor-pointer hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors">
+            <Upload className="w-3.5 h-3.5" />
+            <span>Import Snapshot File</span>
+            <input
+              type="file"
+              accept=".json"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                  const text = await file.text();
+                  const json = JSON.parse(text);
+                  const res = await adminFetch('/api/portfolio/backup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(json),
+                  });
+                  if (!res.ok) throw new Error('Import failed');
+                  setFeedback({ type: 'success', message: 'Snapshot imported! Reloading updated portfolio...' });
+                  setTimeout(() => window.location.reload(), 1000);
+                } catch {
+                  setFeedback({ type: 'error', message: 'Failed to import JSON file. Please ensure valid format.' });
+                }
+              }}
+            />
+          </label>
+        </div>
+      </div>
 
       {/* Danger Zone / Reset */}
       <div className="p-6 border border-neutral-300 dark:border-neutral-800 bg-neutral-100/40 dark:bg-neutral-900/40 space-y-3">

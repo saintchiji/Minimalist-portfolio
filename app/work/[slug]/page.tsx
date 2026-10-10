@@ -5,6 +5,7 @@ import { getProjectBySlug, getDb } from '@/lib/db';
 import { Navbar } from '@/components/public/navbar';
 import { Footer } from '@/components/public/footer';
 import { VideoPlayer } from '@/components/video-player';
+import { FilmReelDistribution } from '@/components/public/film-reel-distribution';
 import { ArrowLeft, Calendar, Clock, Film, Camera, User, Tag, ShieldCheck } from 'lucide-react';
 import type { Metadata } from 'next';
 
@@ -160,6 +161,25 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 </div>
               )}
             </div>
+
+            {/* Film Reel Role Distribution (Recharts) */}
+            <FilmReelDistribution
+              cinematographyCount={
+                db.projects.filter(
+                  (p) =>
+                    p.status === 'published' &&
+                    /cinematograph|dp|director of photography|camera/i.test(p.role)
+                ).length
+              }
+              editingCount={
+                db.projects.filter(
+                  (p) =>
+                    p.status === 'published' &&
+                    /edit|color|post/i.test(p.role)
+                ).length
+              }
+              totalFilms={db.projects.filter((p) => p.status === 'published').length}
+            />
 
             <div className="pt-4 border-t border-neutral-200 dark:border-neutral-900">
               <Link
