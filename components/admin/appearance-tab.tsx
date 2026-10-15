@@ -28,18 +28,6 @@ export function AppearanceTab({ appearance, onSave }: AppearanceTabProps) {
     sections: appearance.sections && appearance.sections.length > 0 ? appearance.sections : DEFAULT_SECTIONS,
   });
 
-  React.useEffect(() => {
-    setFormData({
-      defaultTheme: appearance.defaultTheme || 'dark',
-      defaultLayout: appearance.defaultLayout || 'cinematic',
-      typographyStyle: appearance.typographyStyle || 'sans',
-      spacingDensity: appearance.spacingDensity || 'comfortable',
-      autoplayOnMute: appearance.autoplayOnMute ?? false,
-      showTechnicalSpecs: appearance.showTechnicalSpecs ?? true,
-      sections: appearance.sections && appearance.sections.length > 0 ? appearance.sections : DEFAULT_SECTIONS,
-    });
-  }, [appearance]);
-
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 

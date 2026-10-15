@@ -11,11 +11,6 @@ interface CategoriesTabProps {
 
 export function CategoriesTab({ categories, onSave }: CategoriesTabProps) {
   const [list, setList] = useState<Category[]>([...categories]);
-
-  React.useEffect(() => {
-    setList([...categories]);
-  }, [categories]);
-
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 

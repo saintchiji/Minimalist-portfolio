@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
-
 export async function GET() {
   try {
     const db = getDb();
@@ -39,13 +37,7 @@ export async function GET() {
       },
     };
 
-    return NextResponse.json(publicData, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-        Pragma: 'no-cache',
-        Expires: '0',
-      },
-    });
+    return NextResponse.json(publicData);
   } catch (error) {
     console.error('Error fetching public portfolio:', error);
     return NextResponse.json({ error: 'Failed to fetch portfolio data' }, { status: 500 });

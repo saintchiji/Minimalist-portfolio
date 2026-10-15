@@ -644,41 +644,37 @@ let memoryDb: PortfolioDatabase | null = null;
 
 // Ensure database file exists with safe serverless and remote sync fallback
 export function getDb(): PortfolioDatabase {
-  try {
-    // 1. Primary storage check: persistent data/portfolio.json
-    if (fs.existsSync(DB_FILE)) {
-      const content = fs.readFileSync(DB_FILE, 'utf-8');
-      if (content && content.trim().length > 0) {
-        const parsed = JSON.parse(content) as PortfolioDatabase;
-        memoryDb = parsed;
-        return parsed;
-      }
-    }
-
-    // 2. Secondary storage check: /tmp/portfolio.json (serverless write fallback)
-    const tmpFile = path.join('/tmp', 'portfolio.json');
-    if (fs.existsSync(tmpFile)) {
-      const content = fs.readFileSync(tmpFile, 'utf-8');
-      if (content && content.trim().length > 0) {
-        const parsed = JSON.parse(content) as PortfolioDatabase;
-        memoryDb = parsed;
-        return parsed;
-      }
-    }
-  } catch (err) {
-    console.error('Error reading saved database file:', err);
-    // If there is an existing memoryDb from a recent write, return it rather than reverting to seed defaults
-    if (memoryDb) {
-      return memoryDb;
-    }
-  }
-
-  // 3. In-memory cache fallback if disk temporarily unavailable
   if (memoryDb) {
     return memoryDb;
   }
 
-  // 4. Initial seed ONLY if no database exists at all
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      try {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      } catch {}
+    }
+
+    if (fs.existsSync(DB_FILE)) {
+      const content = fs.readFileSync(DB_FILE, 'utf-8');
+      const parsed = JSON.parse(content) as PortfolioDatabase;
+      memoryDb = parsed;
+      return parsed;
+    }
+
+    // Check /tmp fallback in serverless environments
+    const tmpFile = path.join('/tmp', 'portfolio.json');
+    if (fs.existsSync(tmpFile)) {
+      const content = fs.readFileSync(tmpFile, 'utf-8');
+      const parsed = JSON.parse(content) as PortfolioDatabase;
+      memoryDb = parsed;
+      return parsed;
+    }
+  } catch (err) {
+    console.error('Error reading database file:', err);
+  }
+
+  // If not found or error, initialize
   const initial = getInitialData();
   saveDb(initial);
   memoryDb = initial;

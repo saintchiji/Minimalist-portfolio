@@ -370,8 +370,7 @@
           "SmallHD Cine 7 & Teradek Bolt 4K Wireless Video"
         ]
       }
-    ],
-    "storyHeading": "A DECADE OF VISUAL EXCELLENCE"
+    ]
   },
   "services": [
     {
@@ -516,8 +515,12 @@
     ]
   },
   "branding": {
-    "siteTitle": "JULIAN KALE // CINEMATOGRAPHY",
-    "monogram": "JK"
+    "siteTitle": "CHIJIOKE // FILMS",
+    "monogram": "FILMSBYCHIJI",
+    "logoUrl": "",
+    "logoHeight": 28,
+    "showTitleAlongsideLogo": true,
+    "faviconUrl": ""
   },
   "navigation": {
     "items": [

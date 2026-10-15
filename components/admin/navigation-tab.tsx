@@ -13,13 +13,6 @@ export function NavigationTab({ navigation, onSave }: NavigationTabProps) {
   const [items, setItems] = useState<NavItem[]>([...navigation.items]);
   const [footerCopyright, setFooterCopyright] = useState(navigation.footerCopyright);
   const [footerStatement, setFooterStatement] = useState(navigation.footerStatement);
-
-  React.useEffect(() => {
-    setItems([...navigation.items]);
-    setFooterCopyright(navigation.footerCopyright);
-    setFooterStatement(navigation.footerStatement);
-  }, [navigation]);
-
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 

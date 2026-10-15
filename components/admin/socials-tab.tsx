@@ -11,11 +11,6 @@ interface SocialsTabProps {
 
 export function SocialsTab({ socials, onSave }: SocialsTabProps) {
   const [list, setList] = useState<SocialLink[]>([...socials]);
-
-  React.useEffect(() => {
-    setList([...socials]);
-  }, [socials]);
-
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 

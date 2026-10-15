@@ -19,13 +19,6 @@ export function AdminAuthGuard({ initialData, serverAuthenticated }: AdminAuthGu
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (initialData) {
-      setData(initialData);
-      setLoading(false);
-    }
-  }, [initialData]);
-
-  useEffect(() => {
     // If server already authenticated and provided data, nothing more needed
     if (serverAuthenticated && initialData) {
       return;

@@ -50,10 +50,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [openNewProjectModal, setOpenNewProjectModal] = useState(false);
 
-  React.useEffect(() => {
-    setData(initialData);
-  }, [initialData]);
-
   const tabs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'hero', label: 'Hero Section', icon: Sparkles },
@@ -91,7 +87,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, hero: updatedHero }));
-    router.refresh();
   };
 
   const handleSaveProject = async (project: Project) => {
@@ -113,7 +108,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
       }
       return { ...prev, projects: nextProjects };
     });
-    router.refresh();
   };
 
   const handleDeleteProject = async (id: string) => {
@@ -125,7 +119,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
       ...prev,
       projects: prev.projects.filter((p) => p.id !== id),
     }));
-    router.refresh();
   };
 
   const handleReorderProjects = async (orderedIds: string[]) => {
@@ -137,7 +130,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     const result = await res.json();
     if (!res.ok) throw new Error('Reorder failed');
     setData((prev) => ({ ...prev, projects: result.projects }));
-    router.refresh();
   };
 
   const handleSaveCategories = async (categories: Category[]) => {
@@ -148,7 +140,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, categories }));
-    router.refresh();
   };
 
   const handleSaveAbout = async (about: AboutSection) => {
@@ -159,7 +150,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, about }));
-    router.refresh();
   };
 
   const handleSaveServices = async (services: ServiceItem[], workflow: WorkflowStep[]) => {
@@ -170,7 +160,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, services, workflow }));
-    router.refresh();
   };
 
   const handleSaveContact = async (contactSettings: Partial<ContactSettings>) => {
@@ -184,7 +173,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
       ...prev,
       contact: { ...prev.contact, ...contactSettings },
     }));
-    router.refresh();
   };
 
   const handleUpdateInquiryStatus = async (id: string, status: 'unread' | 'read' | 'archived') => {
@@ -201,7 +189,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
         inquiries: prev.contact.inquiries.map((i) => (i.id === id ? { ...i, status } : i)),
       },
     }));
-    router.refresh();
   };
 
   const handleDeleteInquiry = async (id: string) => {
@@ -214,7 +201,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
         inquiries: prev.contact.inquiries.filter((i) => i.id !== id),
       },
     }));
-    router.refresh();
   };
 
   const handleSaveBranding = async (branding: BrandingSettings) => {
@@ -225,7 +211,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, branding }));
-    router.refresh();
   };
 
   const handleUploadMediaSuccess = (item: MediaItem) => {
@@ -233,7 +218,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
       ...prev,
       media: [item, ...(prev.media || [])],
     }));
-    router.refresh();
   };
 
   const handleDeleteMedia = async (id: string) => {
@@ -243,7 +227,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
       ...prev,
       media: (prev.media || []).filter((m) => m.id !== id),
     }));
-    router.refresh();
   };
 
   const handleSaveNavigation = async (nav: NavigationSettings) => {
@@ -254,7 +237,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, navigation: nav }));
-    router.refresh();
   };
 
   const handleSaveSocials = async (socials: SocialLink[]) => {
@@ -265,7 +247,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, socials }));
-    router.refresh();
   };
 
   const handleSaveAppearance = async (app: AppearanceSettings) => {
@@ -276,7 +257,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     });
     if (!res.ok) throw new Error('Save failed');
     setData((prev) => ({ ...prev, appearance: app }));
-    router.refresh();
   };
 
   const handleSaveGeneral = async (gen: Partial<GeneralSettings> & { newPassword?: string }) => {
@@ -291,7 +271,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
       ...prev,
       general: { ...prev.general, ...result.general },
     }));
-    router.refresh();
   };
 
   const handleResetDefaults = async () => {
@@ -303,7 +282,6 @@ export function AdminClient({ initialData }: AdminClientProps) {
     const result = await res.json();
     if (!res.ok) throw new Error('Reset failed');
     setData(result.data);
-    router.refresh();
   };
 
   return (
