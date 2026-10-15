@@ -35,6 +35,33 @@ export function HeroTab({ hero, onSave }: HeroTabProps) {
     stats: hero.stats || [],
   });
 
+  // Sync state if initialData/props update from server or navigation
+  React.useEffect(() => {
+    setFormData({
+      visible: hero.visible !== false,
+      alignment: hero.alignment || 'left',
+      headline: hero.headline || '',
+      professionalTitle: hero.professionalTitle || 'Professional Video Editor & Cinematographer',
+      subtitle: hero.subtitle || '',
+      statement: hero.statement || '',
+      backgroundMedia: hero.backgroundMedia || {
+        type: 'none',
+        url: '',
+        opacity: 0.15,
+      },
+      showreelVideoUrl: hero.showreelVideoUrl || '',
+      showreelSource: hero.showreelSource || 'direct',
+      showreelPoster: hero.showreelPoster || '',
+      ctaPrimaryText: hero.ctaPrimaryText || 'Watch Showreel',
+      ctaPrimaryLink: hero.ctaPrimaryLink || '#showreel',
+      ctaPrimaryVisible: hero.ctaPrimaryVisible !== false,
+      ctaSecondaryText: hero.ctaSecondaryText || 'Inquire Availability',
+      ctaSecondaryLink: hero.ctaSecondaryLink || '#contact',
+      ctaSecondaryVisible: hero.ctaSecondaryVisible !== false,
+      stats: hero.stats || [],
+    });
+  }, [hero]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);

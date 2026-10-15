@@ -13,6 +13,9 @@ interface BrandingTabProps {
 
 export function BrandingTab({ branding, onSave }: BrandingTabProps) {
   const [formData, setFormData] = useState<BrandingSettings>({ ...branding });
+  React.useEffect(() => {
+    setFormData({ ...branding });
+  }, [branding]);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);

@@ -38,6 +38,19 @@ export function ContactTab({
   const [inquiries, setInquiries] = useState<Inquiry[]>([...(contact.inquiries || [])]);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [filterStatus, setFilterStatus] = useState<'all' | 'unread' | 'read'>('all');
+
+  React.useEffect(() => {
+    setSettings({
+      email: contact.email,
+      phone: contact.phone,
+      location: contact.location,
+      timezone: contact.timezone,
+      agent: contact.agent,
+      availabilityStatus: contact.availabilityStatus,
+    });
+    setInquiries([...(contact.inquiries || [])]);
+  }, [contact]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 

@@ -50,6 +50,10 @@ export function AdminClient({ initialData }: AdminClientProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [openNewProjectModal, setOpenNewProjectModal] = useState(false);
 
+  React.useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
+
   const tabs = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'hero', label: 'Hero Section', icon: Sparkles },

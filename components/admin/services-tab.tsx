@@ -13,6 +13,12 @@ interface ServicesTabProps {
 export function ServicesTab({ services, workflow, onSave }: ServicesTabProps) {
   const [srvList, setSrvList] = useState<ServiceItem[]>([...services]);
   const [wfList, setWfList] = useState<WorkflowStep[]>([...workflow]);
+
+  React.useEffect(() => {
+    setSrvList([...services]);
+    setWfList([...workflow]);
+  }, [services, workflow]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 

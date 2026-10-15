@@ -21,6 +21,16 @@ export function GeneralTab({ general, onSave, onResetDefaults }: GeneralTabProps
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  React.useEffect(() => {
+    setFormData({
+      siteName: general.siteName,
+      siteDescription: general.siteDescription,
+      keywords: general.keywords,
+      adminEmail: general.adminEmail,
+    });
+  }, [general]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);

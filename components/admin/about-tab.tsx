@@ -12,6 +12,9 @@ interface AboutTabProps {
 
 export function AboutTab({ about, onSave }: AboutTabProps) {
   const [formData, setFormData] = useState<AboutType>({ ...about });
+  React.useEffect(() => {
+    setFormData({ ...about });
+  }, [about]);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
